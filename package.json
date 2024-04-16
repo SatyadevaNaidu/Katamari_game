@@ -1,0 +1,17 @@
+{
+  "name": "webgl-playground",
+  "version": "0.1.0",
+  "description": "An easy place to start.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "live-server"
+  },
+  "devDependencies": {
+    "live-server": "^1.1.0",
+    "vite": "^5.2.8"
+  },
+  "dependencies": {
+    "howler": "^2.2.4",
+    "three": "^0.163.0"
+  }
+}
