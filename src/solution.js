@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-let renderer, scene, camera, ball, initialRotation, coins = []; // Declaring coins array
+let renderer, scene, camera, ball, initialRotation, generatedCoins = 0, attachedCoins = 0; // Declaring variables for coins
+let gameEnded = false; // Variable to track game ending
+let coins = []; // Array to store coin meshes
 
 // Parameters for the damping effect
 const dampingFactor = 0.05; // Reduced damping for smoother effect
@@ -47,12 +49,12 @@ window.init = async () => {
     // Create gold coins at each intersection of the grid
     const coinGeometry = new THREE.CylinderGeometry(5, 5, 1, 32); // Coin geometry (cylinder)
     const coinMaterial = new THREE.MeshBasicMaterial({ color: 0xffd700 }); // Gold color
-    coins = []; // Initialize coins array
     gridPositions.forEach(({ x, z }) => {
         const coin = new THREE.Mesh(coinGeometry, coinMaterial);
         coin.position.set(x, 7, z); // Set y-coordinate to 7 to place coins on the surface
         coin.rotation.x = Math.PI / 2; // Adjust rotation to stand upright
-        coins.push(coin);
+        generatedCoins++; // Increment generated coins count
+        coins.push(coin); // Push coin into coins array
         scene.add(coin);
     });
 
@@ -85,7 +87,7 @@ window.init = async () => {
 
 // Function to handle keyboard input
 function handleKeyDown(event) {
-    const speed = 2.5;
+    const speed = 10;
     const rotationSpeed = 0.3;
     const squareSize = 450;
     const ballRadius = 14;
@@ -141,15 +143,55 @@ function rollBall(rotationSpeed) {
 
 // Function to check collision between the ball and coins
 function checkCollision() {
+    if (gameEnded) return; // If the game has already ended, return early
+
     coins.forEach(coin => {
         const distance = ball.position.distanceTo(coin.position);
-        if (distance < 20) { // Adjust this value as needed for the collision detection threshold
+        if (distance < 20 && !coin.attached) { // Adjust this value as needed for the collision detection threshold
             // Calculate the offset between the coin and the ball
             const offset = new THREE.Vector3().subVectors(coin.position, ball.position);
             ball.add(coin); // Attach the coin to the ball
             coin.position.copy(offset); // Set the coin's position relative to the ball
+            coin.attached = true; // Mark coin as attached
+            attachedCoins++; // Increment attached coins count
         }
     });
+
+    if (attachedCoins === generatedCoins) {
+        gameEnded = true; // Update gameEnded variable
+        showGameEndedPopup();
+    }
+}
+
+// Function to show the game ended popup
+function showGameEndedPopup() {
+    // Create a popup element
+    const popup = document.createElement('div');
+    popup.classList.add('popup');
+    popup.textContent = 'Game Ended!';
+    
+    // Add styles to the popup
+    popup.style.position = 'absolute';
+    popup.style.top = '50%';
+    popup.style.left = '50%';
+    popup.style.transform = 'translate(-50%, -50%)';
+    popup.style.padding = '20px';
+    popup.style.background = 'rgba(255, 255, 255, 0.9)';
+    popup.style.border = '2px solid black';
+    popup.style.borderRadius = '10px';
+    popup.style.fontSize = '24px';
+    popup.style.fontWeight = 'bold';
+    
+    // Append the popup to the document body
+    document.body.appendChild(popup);
+}
+
+// Function to remove the popup
+function removeGameEndedPopup() {
+    const popup = document.querySelector('.popup');
+    if (popup) {
+        popup.remove();
+    }
 }
 
 // Apply the damping effect to the camera movement
@@ -169,7 +211,7 @@ function applyDampingEffect() {
 }
 
 // Animate the rotation of the gold coins
-function animateCoins() {
+function animateCoins(coins) {
     coins.forEach(coin => {
         coin.rotation.y += 0.03; // Adjust rotation speed as needed
     });
@@ -183,7 +225,7 @@ function animate() {
     applyDampingEffect();
 
     // Animate rotation of gold coins
-    animateCoins();
+    animateCoins(coins);
 
     // Render the scene
     renderer.render(scene, camera);
