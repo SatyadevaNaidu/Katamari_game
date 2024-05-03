@@ -458,7 +458,7 @@ function showGameEndedPopup() {
     // Create a popup element
     const popup = document.createElement('div');
     popup.classList.add('popup');
-    popup.textContent = 'Game Ended!';
+    popup.textContent = 'Hooray we created the crown!';
     
     // Add styles to the popup
     popup.style.position = 'absolute';
