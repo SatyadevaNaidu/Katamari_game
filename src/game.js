@@ -73,7 +73,7 @@ function generateInstructions() {
         'After all pieces are collected, the game will end and you can see the crown on the ball.',
         'You have to help our king by navigating the ball around the island using the arrow keys to move in respective direction.',
         'You can stop pressing the arrow keys to apply brakes to the ball, beware it jerks as it stops rolling and has to stop.',
-        'After the game is finished you can check the crown by using arrow keys dont worry the ball doenot move but rotates.'
+        'After the game is finished you can check the crown by using arrow keys dont worry the ball doesnot move but rotates.'
     ];
 
     // Create li elements for each bullet point
