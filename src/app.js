@@ -38,7 +38,7 @@ const loop = (time) => {
 
 // Adds a script tag to the DOM with our solution.
 const attachScript = () => {
-  const url = `./src/solution.js`;
+  const url = `./src/game.js`;
   const scriptTag = document.createElement('script');
   scriptTag.src = url;
   scriptTag.type = 'module';
